@@ -1,0 +1,109 @@
+pip install yfinance
+import yfinance as yf
+import pandas as pd
+
+# Download Tesla stock data
+tesla_data = yf.download('TSLA', start='2020-01-01', end='2024-02-13')
+
+# Reset the index
+tesla_data.reset_index(inplace=True)
+
+# Display the first five rows
+print(tesla_data.head())
+pip install requests beautifulsoup4 pandas
+import requests
+import pandas as pd
+from bs4 import BeautifulSoup
+
+# URL of Tesla's revenue data (Macrotrends)
+url = "https://www.macrotrends.net/stocks/charts/TSLA/tesla/revenue"
+
+# Fetch the webpage content
+response = requests.get(url)
+soup = BeautifulSoup(response.text, "html.parser")
+
+# Find the correct table
+tables = soup.find_all("table")
+for table in tables:
+    if "Tesla Annual Revenue" in str(table):
+        revenue_table = table
+        break
+
+# Extract table data
+rows = revenue_table.find_all("tr")
+data = []
+for row in rows[1:]:  # Skip the header
+    cols = row.find_all("td")
+    cols = [ele.text.strip() for ele in cols]
+    if cols:
+        data.append(cols)
+
+# Create a DataFrame
+tesla_revenue = pd.DataFrame(data, columns=["Year", "Revenue"])
+tesla_revenue["Revenue"] = tesla_revenue["Revenue"].str.replace("[$,]", "", regex=True).astype(float)
+
+# Display the last five rows
+print(tesla_revenue.tail())
+
+import yfinance as yf
+import pandas as pd
+
+# Download GameStop stock data
+gme_data = yf.download('GME', start='2020-01-01', end='2024-02-13')
+
+# Reset the index
+gme_data.reset_index(inplace=True)
+
+# Display the first five rows
+print(gme_data.head())
+
+# URL for GameStop revenue data
+url = "https://www.macrotrends.net/stocks/charts/GME/gamestop/revenue"
+
+# Fetch the webpage content
+response = requests.get(url)
+soup = BeautifulSoup(response.text, "html.parser")
+
+# Find the correct table
+tables = soup.find_all("table")
+for table in tables:
+    if "GameStop Annual Revenue" in str(table):
+        revenue_table = table
+        break
+
+# Extract table data
+rows = revenue_table.find_all("tr")
+data = []
+for row in rows[1:]:  # Skip the header
+    cols = row.find_all("td")
+    cols = [ele.text.strip() for ele in cols]
+    if cols:
+        data.append(cols)
+
+# Create a DataFrame
+gme_revenue = pd.DataFrame(data, columns=["Year", "Revenue"])
+gme_revenue["Revenue"] = gme_revenue["Revenue"].str.replace("[$,]", "", regex=True).astype(float)
+
+# Display the last five rows
+print(gme_revenue.tail())
+
+import matplotlib.pyplot as plt
+
+# Function to plot stock data
+def make_graph(data, title):
+    plt.figure(figsize=(12, 6))
+    plt.plot(data['Date'], data['Close'], label="Closing Price", color='blue')
+    plt.xlabel("Date")
+    plt.ylabel("Stock Price (USD)")
+    plt.title(title)
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+# Plot Tesla stock data
+make_graph(tesla_data, "Tesla Stock Price (2020-2024)")
+
+# Plot GameStop stock data
+make_graph(gme_data, "GameStop Stock Price (2020-2024)")
+
+
